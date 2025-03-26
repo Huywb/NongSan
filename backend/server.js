@@ -6,6 +6,8 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import { ConectDB } from './libs/DB/ConnectDB.js'
 
+import UserRoute from './router/User.js'
+
 dotenv.config()
 const app = express()
 app.use(cors({
@@ -13,20 +15,20 @@ app.use(cors({
     origin: process.env.FRONTEND_URL
 }))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
-app.use(morgan())
+app.use(morgan("dev"));
 app.use(helmet({
     crossOriginResourcePolicy: false
 }))
 
-const PORT = 8080 || process.env.PORT
+const PORT = 8080 
 
-app.use('api/user',()=>{
+app.use('/api/user',UserRoute)
 
-})
 
-ConectDB()
 
 app.listen(PORT,()=>{
+    ConectDB()
     console.log('Server is running at port',PORT)
 })
