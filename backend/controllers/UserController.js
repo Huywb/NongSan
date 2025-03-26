@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import generatedAccessToken from "../libs/GenerateAccessToken.js";
 import genertedRefreshToken from "../libs/GenerateRefreshToken.js";
 import uploadImageClodinary from "../libs/Cloudinary/Cloudinary.js";
+import jwt from 'jsonwebtoken'
 
 export const Login = async (req,res)=>{
     try {
@@ -88,32 +89,6 @@ export const Register = async (req,res)=>{
     }
 }
 
-export const Update = async(req,res)=>{
-    try {
-        const {id} = req.params
-        const {name,email,password,img} = req.body
-
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        const Salt = await bcrypt.genSalt(10)
-        const hashPass = await bcrypt.hash(password,Salt)
-
-        const UpdateUser = await User.findByIdAndUpdate(id,{
-            name,
-            email,
-            password:hashPass,
-            img
-        },{new:true})
-
-        res.status(200).json({message:"Update User success",data: UpdateUser})
-    } catch (error) {
-        console.log("Error [Update controller]",error.message)
-        return res.status(500).json({message: "Internal Server Error"}) 
-    }
-}
 
 export const LoginAdmin = async(req,res)=>{
     try {
@@ -178,32 +153,6 @@ export const RegisterAdmin = async (req,res)=>{
     } catch (error) {
         console.log("Error [Register controller]",error.message)
         return res.status(500).json({message: "Internal Server Error"})        
-    }
-}
-
-export const UpdateAdmin = async(req,res)=>{
-    try {
-        const {id} = req.params
-        const {name,email,password} = req.body
-
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        const Salt = await bcrypt.genSalt(10)
-        const hashPass = await bcrypt.hash(password,Salt)
-
-        const UpdateUser = await User.findByIdAndUpdate(id,{
-            name,
-            email,
-            password:hashPass
-        },{new:true})
-
-        res.status(200).json({message:"Update User success",data: UpdateUser})
-    } catch (error) {
-        onsole.log("Error [Update controller]",error.message)
-        return res.status(500).json({message: "Internal Server Error"}) 
     }
 }
 
@@ -330,10 +279,11 @@ export const refreshToken = async(req,res)=>{
     }
 }
 
-
 export const userDetail = async(req,res)=>{
     try {
         const userId = req.userId
+
+        console.log('1',userId)
         
         const user = await User.findById(userId).select('-password -refresh_token')
 

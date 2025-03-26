@@ -13,7 +13,7 @@ router.get('/logout',auth,Logout)
 router.put('/upload-avatar',auth,upload.single('avatar'),uploadAvatar)
 router.put('/update-user',auth,updateUserDetails)
 router.post('/refresh-token',refreshToken)
-router.get('/user-details',auth,userDetail)
+router.get('/user-detail',auth,userDetail)
 
 
 
