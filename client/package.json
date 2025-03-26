@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

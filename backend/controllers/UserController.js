@@ -1,5 +1,6 @@
 import User from "../models/User";
 import bcrypt from 'bcryptjs'
+import cloudinary from "../config/cloudinary";
 
 export const Login = async (req,res)=>{
     try {
@@ -70,7 +71,7 @@ export const Register = async (req,res)=>{
 export const Update = async(req,res)=>{
     try {
         const {id} = req.params
-        const {name,email,password} = req.body
+        const {name,email,password,img} = req.body
 
         const user = await User.findById(id);
         if (!user) {
@@ -80,10 +81,23 @@ export const Update = async(req,res)=>{
         const Salt = await bcrypt.genSalt(10)
         const hashPass = await bcrypt.hash(password,Salt)
 
+        if (img && img.startsWith("data:image")) { 
+            if (user.img) {
+                const publicId = user.img.split("/").pop().split(".")[0]; 
+                await cloudinary.uploader.destroy(`users/${publicId}`);
+            }
+        
+            const uploadedResponse = await cloudinary.uploader.upload(img, {
+                folder: "users",
+            });
+            img = uploadedResponse.secure_url;
+        }
+
         const UpdateUser = await User.findByIdAndUpdate(id,{
             name,
             email,
-            password:hashPass
+            password:hashPass,
+            img
         },{new:true})
 
         res.status(200).json({message:"Update User success",data: UpdateUser})
