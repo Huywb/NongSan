@@ -7,6 +7,7 @@ import helmet from 'helmet'
 import { ConectDB } from './libs/DB/ConnectDB.js'
 
 import UserRoute from './router/User.js'
+import ProductRoute from './router/Product.js'
 
 dotenv.config()
 const app = express()
@@ -25,6 +26,7 @@ app.use(helmet({
 const PORT = 8080 
 
 app.use('/api/user',UserRoute)
+app.use('/api/product',ProductRoute)
 
 
 

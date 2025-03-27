@@ -16,9 +16,6 @@ router.post('/refresh-token',refreshToken)
 router.get('/user-detail',auth,userDetail)
 
 
-
-
-
 //Admin
 router.post("/admin/login",LoginAdmin)
 router.post("/admin/register",RegisterAdmin)
