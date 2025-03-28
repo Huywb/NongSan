@@ -14,12 +14,6 @@ const productSchema = new mongoose.Schema({
             ref : 'category'
         }
     ],
-    subCategory : [
-        {
-            type : mongoose.Schema.ObjectId,
-            ref : 'subCategory'
-        }
-    ],
     unit : {
         type : String,
         default : ""
@@ -39,10 +33,6 @@ const productSchema = new mongoose.Schema({
     description : {
         type : String,
         default : ""
-    },
-    more_details : {
-        type : Object,
-        default : {}
     },
     publish : {
         type : Boolean,

@@ -20,5 +20,5 @@ const uploadImageClodinary = async(image)=>{
 
     return uploadImage
 }
-
+    
 export default uploadImageClodinary

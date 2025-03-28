@@ -11,7 +11,7 @@ router.post('/register',Register)
 router.post('/login',Login)
 router.get('/logout',auth,Logout)
 router.put('/upload-avatar',auth,upload.single('avatar'),uploadAvatar)
-router.put('/update-user',auth,updateUserDetails)
+router.put('/update',auth,updateUserDetails)
 router.post('/refresh-token',refreshToken)
 router.get('/user-detail',auth,userDetail)
 

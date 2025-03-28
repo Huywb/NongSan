@@ -3,25 +3,23 @@ import ProductModel from "../models/Product.js"
 
 export const CreateProduct = async(req,res)=>{
     try {
-        const {name,image,category,subCategory,unit,stock,price,discount,description,more_details} = req.body
-            //
-        if(!name ||!image[0] || !category[0] || !subCategory[0] ||  !unit || !price || !description){
+        const {name,image,category,unit,stock,price,discount,description} = req.body
+            //||!image[0] || !category[0] 
+        if(!name  ||  !unit || !price || !description || !stock){
             return res.status(400).json({message:"All fields are required",error:true,success:false})
         }
         const newProduct = await ProductModel.create({
             name,
             image,
             category,
-            subCategory,
             unit,
             stock,
             price,
             discount,
             description,
-            more_details,
         })
 
-        res.status(200).json({message:"Create new product Success",error:false,success:true})
+        res.status(200).json({message:"Create new product Success",error:false,success:true,data: newProduct})
     } catch (error) {
         console.log("Error [CreateProduct controller]",error.message)
         return res.status(500).json({message: "Internal Server Error"})  
@@ -80,42 +78,6 @@ export const getProductByCategory = async(req,res)=>{
     }
 }
 
-export const getProductByCategoryAndSubCategory = async (req,res)=>{
-    try {
-        const {categoryId,subCategoryId,page,limit} = req.query
-
-        if(!categoryId || !subCategoryId){
-            return res.status(400).json({message:"Provide categoryId and subCategoryId",success:false,error:true})
-        }
-
-        if(!page){
-            page = 1
-        }
-
-        if(!limit){
-            limit = 10
-        }
-
-        const query = {
-            category: {$in : categoryId},
-            subCategory: {$in : subCategoryId}
-        }
-
-        const skip = (page - 1) * limit
-
-        const [data,totalCount] = await Promise.all([
-            ProductModel.find(query).sort({createdAt : -1 }).skip(skip).limit(limit),
-            ProductModel.countDocuments(query)
-        ])
-
-        res.status(200).json({message:"getProductByCateAndSubCate success",error:false,success:true,})
-
-    } catch (error) {
-        console.log("Error [GetProductByCategoryAndSubCategory controller]",error.message)
-        return res.status(500).json({message: "Internal Server Error"})
-    }
-}
-
 export const getProductDetail = async(req,res)=>{
     try {
         const {productId} = req.body
@@ -131,13 +93,12 @@ export const getProductDetail = async(req,res)=>{
 
 export const updateProduct = async(req,res)=>{
     try {
-        const {productId,name,image,category,subCategory,unit,stock,price,discount,description,more_details} = req.body
+        const {productId,name,image,category,unit,stock,price,discount,description,more_details} = req.body
 
         const updateProduct = await ProductModel.findByIdAndUpdate(productId,{
             ...(name && { name }),
             ...(image && { image }),
             ...(category && { category }),
-            ...(subCategory && { subCategory }),
             ...(unit && { unit }),
             ...(stock && { stock }),
             ...(price && { price }),
