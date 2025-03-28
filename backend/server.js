@@ -27,6 +27,7 @@ const PORT = 8080
 
 app.use('/api/user',UserRoute)
 app.use('/api/product',ProductRoute)
+app.use('/api/category',)
 
 
 
