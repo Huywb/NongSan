@@ -1,19 +1,35 @@
-import AddressModel from "../models/Address"
+import AddressModel from "../models/Address.js"
+import UserModel from "../models/User.js"
 
 
 export const addAddress = async(req,res)=>{
     try {
         const userId = req.userId
-        const { address_line , city, state, pincode, country,mobile } = req.body
+        const { address_line , city, country,mobile } = req.body
+
+        if(!address_line || !city || !country || !mobile){
+            return res.status(400).json({message:"All fields are required",success:false,error:true})
+        }
+
+        if(!userId){
+            return res.status(400).json({message:"Unauthorized",success:false,error:true})
+        }
 
         const newAddress = await AddressModel.create({
             address_line,
             city,
-            state,
-            pincode,
             country,
-            mobile
+            mobile,
+            userId
         })
+
+        if(!newAddress){
+            return res.status(400).json({message:"Add new Address Unsuccess",success:false,error:true})
+        }
+
+        await UserModel.findByIdAndUpdate(userId,{
+            $push : {address_details : newAddress._id}
+        },{new:true})
 
         res.status(200).json({message:"Add new Address Success",success:true,error:false,data: newAddress})
     } catch (error) {
@@ -24,17 +40,32 @@ export const addAddress = async(req,res)=>{
 
 export const updateAddress = async(req,res)=>{
     try {
-        const userid = req.userId
-        const { _id, address_line,city,state,country,pincode, mobile} = req.body
+        const userId = req.userId
+        const { _id, address_line,city,country, mobile} = req.body
 
-        const updateAdd = await AddressModel.findByIdAndUpdate({_id: _id,userId: userid},{
+        if(!userId) {
+            return res.status(400).json({message:"Unauthorized",success:false,error:true})
+        }
+
+        if(!_id){
+            return res.status(400).json({message:"Address ID is required",success:false,error:true})
+        }
+
+        console.log("userid",userId)
+        console.log("_id",_id)
+
+        const existingAddress = await AddressModel.findOne({_id : _id,userId : userId})
+
+        if(!existingAddress){
+            return res.status(400).json({message:"Address not found",success:false,error:true})
+        }
+
+        const updateAdd = await AddressModel.findByIdAndUpdate({_id:_id},{
             ...(address_line && { address_line }),  
             ...(city && { city }),
-            ...(state && { state }),  
             ...(country && { country }),
-            ...(pincode && { pincode }),  
             ...(mobile && { mobile })
-        })
+        },{new:true})
 
         res.status(200).json({message:"Update Address success",succes:true,error:false,data: updateAdd})
     } catch (error) {

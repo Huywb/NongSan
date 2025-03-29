@@ -39,10 +39,14 @@ export const addToCart = async(req,res)=>{
 export const getCartItem = async(req,res)=>{
     try {
         const userId = req.userId
+
+        if(!userId){
+            return res.status(400).json({message:"Unauthorized",success:false,error:true})
+        }
         
         const getAllCart = await CartProductModel.find({userId: userId}).populate("productId")
 
-        res.status(200).json({message:"GetCartItem success",success:true,error:false})
+        res.status(200).json({message:"GetCartItem success",success:true,error:false,data : getAllCart})
 
     } catch (error) {
         console.log("Error [getCartItem controller]",error.message)
