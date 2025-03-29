@@ -237,6 +237,10 @@ export const updateUserDetails = async(req,res)=>{
             ...(password && {password : hashPass}),
         })
 
+        if(!updateUser){
+            return res.status(400).json({message:"Update user unsuccessfully",success:false,error:true})
+        }
+
         res.status(200).json({message:"Update user Succesfully",error:false,success:true,data: updateUser})
     } catch (error) {
         console.log("Error [updateUserDetails controller]",error.message)
