@@ -5,10 +5,10 @@ import { addToCart, deleteCartItem, getCartItem, updateCartItem } from '../contr
 
 const router = express.Router()
 
-router.get("/",auth,getCartItem)
+router.get("/get",auth,getCartItem)
 router.post("/add",auth,addToCart)
 router.put("/update",auth,updateCartItem)
-router.delete("/delete/:id",deleteCartItem)
+router.delete("/delete/:id",auth,deleteCartItem)
 
 
 export default router
