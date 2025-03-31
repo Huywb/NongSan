@@ -4,6 +4,10 @@ import Home from '../pages/Home'
 import SearchPage from '../pages/SearchPage'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
+import Dashboard from '../layout/Dashboard'
+import Profile from '../components/Profile'
+import Myorders from '../components/Myorders'
+import Address from '../components/Address'
 
 const router = createBrowserRouter([
     {
@@ -15,16 +19,34 @@ const router = createBrowserRouter([
                 element: <Home></Home>
             },
             {
-                path: "/search",
+                path: "search",
                 element: <SearchPage></SearchPage>
             },
             {
-                path: "/login",
+                path: "login",
                 element:<Login></Login>
             },
             {
-                path: "/register",
+                path: "register",
                 element: <Register></Register>
+            },
+            {
+                path: "dashboard",
+                element: <Dashboard></Dashboard>,
+                children: [
+                    {
+                        path: "profile",
+                        element: <Profile></Profile>
+                    },
+                    {
+                        path: "myorders",
+                        element : <Myorders></Myorders>
+                    },
+                    {
+                        path: 'address',
+                        element: <Address></Address>
+                    }
+                ]
             }
         ]
     }
