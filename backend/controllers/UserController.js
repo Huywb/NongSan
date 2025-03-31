@@ -40,14 +40,15 @@ export const Login = async (req,res)=>{
         const cookieOptions = {
             httpOnly: true,
             secure: isProduction,
-            sameSite: "None"
+            sameSite: "Lax"
         }
 
         res.cookie('accessToken',accessToken,cookieOptions)
         res.cookie('refreshToken',refreshToken,cookieOptions)
 
         res.status(200).json({message: "Login success",data: {usercheck,accessToken,refreshToken}})
-    
+        
+        console.log('accessLogin',req.cookies)
     } catch (error) {
         console.log("Error [Login controller]",error.message)
         return res.status(500).json({message: "Internal Server Error"})        
@@ -63,7 +64,7 @@ export const Register = async (req,res)=>{
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
-            return res.status(400).json({message: "Email is not valid"})
+            return res.status(400).json({message: "Email is not valid",error:true,success:false})
         }
 
         const usercheck = await User.findOne({email})
@@ -174,14 +175,14 @@ export const DeleteAdmin = async(req,res)=>{
 export const Logout = async(req,res)=>{
     try {
         const userid = req.userId
-        console.log(userid)
+        console.log('userid',userid)
 
 
         const isProduction = process.env.NODE_ENV === "production";
         const cookiesOption = {
             httpOnly : true,
             secure : isProduction,
-            sameSite : "None"
+            sameSite : "Lax"
         }
 
         res.clearCookie("accessToken",cookiesOption)
@@ -191,7 +192,7 @@ export const Logout = async(req,res)=>{
             refresh_token : ""
         })
 
-        res.status(200).json({message: "Logout success"})
+        res.status(200).json({message: "Logout success",success:true,error:false})
     } catch (error) {
         
         console.log("Error [Logout controller]",error.message)
