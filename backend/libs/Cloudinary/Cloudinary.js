@@ -4,9 +4,9 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 cloudinary.config({
-    cloud_name : process.env.CLODINARY_CLOUD_NAME,
-    api_key : process.env.CLODINARY_API_KEY,
-    api_secret : process.env.CLODINARY_API_SECRET_KEY
+    cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+    api_key : process.env.CLOUDINARY_API_KEY,
+    api_secret : process.env.CLOUDINARY_API_SECRET
 })
 
 const uploadImageClodinary = async(image)=>{
@@ -20,5 +20,22 @@ const uploadImageClodinary = async(image)=>{
 
     return uploadImage
 }
+
+const uploadMultipleImages = async (images) => {
+    const uploadPromises = images.map(async (image) => {
+        const buffer = image.buffer; // Get file buffer
+        return new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { folder: "ShopNX" },
+                (error, uploadResult) => {
+                    if (error) reject(error);
+                    else resolve(uploadResult.secure_url);
+                }
+            ).end(buffer);
+        });
+    });
+
+    return Promise.all(uploadPromises); // Wait for all uploads to complete
+};
     
 export default uploadImageClodinary

@@ -211,7 +211,7 @@ export const uploadAvatar = async(req,res)=>{
         const updateUser = await User.findByIdAndUpdate(userid,{
             avatar: upload.url
         })
-        res.json({message:"Upload profile",data:{_id: userid,avatar: upload.url}})
+        res.json({message:"Upload profile",success:true,error:false,data:{_id: userid,avatar: upload.url}})
     } catch (error) {
         console.log("Error [uploadAvatar controller]",error.message)
         return res.status(500).json({message: "Internal Server Error"})  
@@ -236,7 +236,7 @@ export const updateUserDetails = async(req,res)=>{
             ...(email && {email : email}),
             ...(mobile && {mobile : mobile}),
             ...(password && {password : hashPass}),
-        })
+        },{new:true})
 
         if(!updateUser){
             return res.status(400).json({message:"Update user unsuccessfully",success:false,error:true})
