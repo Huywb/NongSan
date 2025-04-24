@@ -3,6 +3,8 @@ import { IoMdClose } from "react-icons/io";
 import { CiSquarePlus } from "react-icons/ci";
 import { CiBookmarkRemove } from "react-icons/ci";
 import { CiSquareRemove } from "react-icons/ci";
+import toast from 'react-hot-toast';
+import { BaseURL } from '../libs/APIcustom';
 
 const CategoryAdd = ({close}) => {
     const [data,setData] = useState({
@@ -11,12 +13,11 @@ const CategoryAdd = ({close}) => {
     })
 
     const handleFile = (e)=>{
-        const files = Array.from(e.target.files)
-        if(files.length === 0) return
+        if(e.target.files.length === 0) return
 
         setData((prev)=>({
             ...prev,
-            image: [...prev.image,...files]
+            image: [...prev.image,...e.target.files]
         }))
     }
 
@@ -27,17 +28,33 @@ const CategoryAdd = ({close}) => {
         }));
     };
 
-    const handleSubmit = async()=>{
+    const handleSubmit = async(e)=>{
+        e.preventDefault()
+
+        const formData = new FormData();
+        formData.append("name", data.name);
+        data.image.forEach((file) => formData.append("image", file));
+
+
         const res = await fetch(`${BaseURL}/category/add`,{
             method: "POST",
             headers: {
                 "Content-type": "application/json"
             },
-            body: JSON.stringify(data)  
+            credentials: 'include',
+            body: formData 
         })
 
         const result = await res.json()
+
+        console.log(result)
+        if(result.success == false){
+            toast.error("Something wrong went add new category")
+        }
+        toast.success("Add new category successfully")
     }
+
+    console.log('data',data)
   return (
     <div className='fixed top-0 left-0 right-0 bottom-0 bg-black opacity-80 flex items-center justify-center'>
       <div className='flex flex-col w-[50%] bg-white opacity-100 gap-5 p-4'>
@@ -74,7 +91,7 @@ const CategoryAdd = ({close}) => {
                     ))}
                 </div>
                 </div>
-                <button onClick={()=>console.log('123')} className='bg-gray-500 hover:bg-green-400 transition duration-300 cursor-pointer hover:text-white p-2 rounded'>Submit</button>
+                <button disabled={data.name == '' || data.image.length == 0} onClick={(e)=>handleSubmit(e)} className='bg-gray-500 hover:bg-green-400 transition duration-300 cursor-pointer hover:text-white p-2 rounded'>Submit</button>
             </form>
       </div>
     </div>

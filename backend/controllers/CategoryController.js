@@ -1,18 +1,24 @@
+import { uploadMultipleImages } from "../libs/Cloudinary/Cloudinary.js"
 import CategoryModel from "../models/Category.js"
 
 
 
 export const AddCategory = async(req,res)=>{
     try {
-        const {name,image} = req.body
+        const {name} = req.body
+        const image = req.files
+        console.log('body',req.body)
 
         if(!name || !image[0]){
             return res.status(400).json({message:"All fields are required",success:false,error:true})
         }
+        console.log(image)
+
+        const upLoadMutilpleImage = await uploadMultipleImages(image)
 
         const newCategory = await CategoryModel.create({
             name,
-            image               
+            image : upLoadMutilpleImage               
         })
 
         res.status(200).json({message:"Add new category success",success:true,error:false,data:newCategory})
